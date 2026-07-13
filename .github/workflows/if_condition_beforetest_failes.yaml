@@ -1,0 +1,47 @@
+name: multiple_parallal_jobs
+
+on: [push, workflow_dispatch]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code into the runner  
+        uses: actions/checkout@v3
+      - name: cache dependencies  
+        uses: actions/cache@v6
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+              ${{ runner.os }}-node-
+      - name: install dependencies
+        run: npm ci
+      - name: run lint
+        run: npm run lint
+  test:
+    needs : lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code into the runner 
+        uses: actions/checkout@v3
+      - name: install dependencies
+        run: npm ci
+      - name: run tests
+        run: npm run test
+      - name: upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test.json
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code into the runner 
+        uses: actions/checkout@v3
+      - name: install dependencies
+        run: npm ci
+      - name: build the project
+        run: npm run build     
