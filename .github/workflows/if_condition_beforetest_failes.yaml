@@ -1,6 +1,6 @@
 name: ifcondition_test_fails_job
 
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 
 jobs:
   lint:
@@ -31,7 +31,7 @@ jobs:
       - name: run tests
         run: npm run test
       - name: upload test report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: test-report
           path: test.json
