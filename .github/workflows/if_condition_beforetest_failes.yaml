@@ -1,4 +1,4 @@
-name: multiple_parallal_jobs
+name: ifcondition_test_fails_job
 
 on: [push, workflow_dispatch]
 
