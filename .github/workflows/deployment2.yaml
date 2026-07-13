@@ -6,8 +6,16 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: get code into the runner 
+      - name: get code into the runner  
         uses: actions/checkout@v3
+      - name: cache dependencies  
+        uses: actions/cache@v6
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+              ${{ runner.os }}-node-
       - name: install dependencies
         run: npm ci
       - name: run lint
